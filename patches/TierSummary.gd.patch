@@ -1,0 +1,13 @@
+--- "recovered/TierSummary.gd"	2026-03-20 14:17:28.926912500 +1100
++++ "recovered/TierSummary.gd"	2026-03-20 15:14:07.300844400 +1100
+@@ -87,6 +87,10 @@
+     %"Moeny UI".modulate.a = 1.0
+     %"Moeny UI".animate()
+     %"TaDa Audio".play()
++    get_tree().create_timer(1.5).timeout.connect(func():
++        if is_shown and Global.game_state == Util.GAME_STATES.END_OF_TEIR:
++            _on_upgrades_pressed()
++    )
+ 
+ 
+ func _on_upgrades_pressed() -> void :

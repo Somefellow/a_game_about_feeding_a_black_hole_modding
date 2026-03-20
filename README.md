@@ -48,6 +48,14 @@ Recovers all GDScript source files into `recovered/`. You only need to do this o
 
 All your changes go in `recovered/`. Edit any `.gd` file — the recompile script will detect what changed.
 
+### Apply patches (after a fresh decompile)
+
+```bash
+bash scripts/apply_patches.sh
+```
+
+Applies all patch files from `patches/` onto the freshly decompiled `recovered/` tree. Run this after `decompile.sh` to restore your modifications.
+
 ### Build a modded PCK
 
 ```bash
@@ -61,6 +69,14 @@ This will:
 4. Patch the original PCK with your compiled bytecode
 5. Output `modded_<name>.pck` at the project root
 
+### Update patches (after editing files in recovered/)
+
+```bash
+bash scripts/update_patches.sh
+```
+
+Regenerates `patches/*.patch` by diffing your current `recovered/` against a fresh decompile of the original PCK. Run this before committing to keep patches in sync with your changes.
+
 ### Deploy
 
 Copy `modded_<name>.pck` into the game directory, replacing the original `.pck`.
@@ -72,13 +88,16 @@ Copy `modded_<name>.pck` into the game directory, replacing the original `.pck`.
 ```
 /
 ├── scripts/
-│   ├── init.sh          ← downloads GDRETools
-│   ├── decompile.sh     ← recovers source from PCK
-│   └── recompile.sh     ← compiles changes → modded PCK
-├── original_pck/        ← put your .pck here (gitignored)
-├── recovered/           ← decompiled source; edit here (gitignored)
-├── tools/               ← GDRETools binary (gitignored, populated by init.sh)
-├── compiled/            ← temp bytecode output (gitignored)
+│   ├── init.sh            ← downloads GDRETools
+│   ├── decompile.sh       ← recovers source from PCK
+│   ├── apply_patches.sh   ← applies patches/ onto recovered/
+│   ├── update_patches.sh  ← regenerates patches/ from your changes
+│   └── recompile.sh       ← compiles changes → modded PCK
+├── patches/               ← versioned mod patches (committed to git)
+├── original_pck/          ← put your .pck here (gitignored)
+├── recovered/             ← decompiled source; edit here (gitignored)
+├── tools/                 ← GDRETools binary (gitignored, populated by init.sh)
+└── compiled/              ← temp bytecode output (gitignored)
 ```
 
 ---

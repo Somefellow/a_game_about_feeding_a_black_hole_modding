@@ -1,0 +1,14 @@
+--- "recovered/End of Run Summary.gd"	2026-03-20 14:17:27.096196600 +1100
++++ "recovered/End of Run Summary.gd"	2026-03-20 15:14:04.725975600 +1100
+@@ -175,6 +175,11 @@
+         %"Moeny UI".animate()
+         %"TaDa Audio".play()
+     )
++    anim_tween.tween_interval(1.5)
++    anim_tween.tween_callback(func():
++        if is_shown and Global.game_state == Util.GAME_STATES.END_OF_SESSION:
++            _on_upgrades_pressed()
++    )
+ 
+ 
+ func kill_tweens():

@@ -1,0 +1,73 @@
+--- "recovered/UpgradeScreen.gd"	2026-03-20 14:17:25.962319600 +1100
++++ "recovered/UpgradeScreen.gd"	2026-03-20 17:24:28.532950800 +1100
+@@ -196,6 +196,7 @@
+     set_process_input(true)
+     set_process(true)
+     show()
++    _auto_buy_all_upgrades()
+ 
+ 
+ func check_upgrade_tree_achivements():
+@@ -240,6 +241,62 @@
+     hide_screen()
+ 
+ 
++func _auto_buy_all_upgrades() -> void:
++    if Global.game_state != Util.GAME_STATES.UPGRADES:
++        return
++
++    while Global.game_state == Util.GAME_STATES.UPGRADES:
++        if state == STATES.ROGULIKE:
++            if not await _auto_pick_roguelike_choice():
++                break
++            continue
++
++        var affordable = _get_affordable_available_nodes()
++        if affordable.is_empty():
++            break
++
++        affordable.sort_custom(func(a, b): return a.cost < b.cost)
++        var target = affordable[0]
++        target.is_highlighted = true
++        await get_tree().create_timer(0.5).timeout
++        if Global.game_state != Util.GAME_STATES.UPGRADES:
++            target.is_highlighted = false
++            return
++        target.is_highlighted = false
++        target._on_click_mask_pressed()
++
++    if Global.game_state == Util.GAME_STATES.UPGRADES:
++        await get_tree().create_timer(1.5).timeout
++        if Global.game_state == Util.GAME_STATES.UPGRADES:
++            hide_screen()
++
++
++func _get_affordable_available_nodes() -> Array:
++    var result = []
++    for node in tech_tree.active_nodes:
++        if node.state == TechTreeNode.STATES.AVAILABLE and node.can_pay_cost:
++            result.append(node)
++    return result
++
++
++func _auto_pick_roguelike_choice() -> bool:
++    for child in %"Popup Layer".get_children():
++        if child is UpgradesRoguelike and child.is_active:
++            var choices = [child.node_1, child.node_2, child.node_3]
++            choices.sort_custom(func(a, b): return a.cost < b.cost)
++            for choice in choices:
++                if choice.state == TechTreeNode.STATES.AVAILABLE and choice.can_pay_cost:
++                    choice.is_highlighted = true
++                    await get_tree().create_timer(0.5).timeout
++                    if Global.game_state != Util.GAME_STATES.UPGRADES:
++                        choice.is_highlighted = false
++                        return false
++                    choice.is_highlighted = false
++                    choice._on_click_mask_pressed()
++                    return true
++    return false
++
++
+ func _on_tech_tree_selected_node_changed(new_selected_node: TechTreeNode) -> void :
+     if ControllerIcons.get_last_input_type() == ControllerIcons.InputType.CONTROLLER:
+         if new_selected_node != null:

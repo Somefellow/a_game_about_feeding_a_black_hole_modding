@@ -1,0 +1,11 @@
+--- "recovered/ObjectManager.gd"	2026-03-20 14:17:20.462460300 +1100
++++ "recovered/ObjectManager.gd"	2026-03-20 13:43:15.011042300 +1100
+@@ -492,7 +492,7 @@
+     if Global.game_state == Util.GAME_STATES.PLAYING:
+         if get_all_active_objects(false).size() <= 0:
+             if Global.main != null:
+-                Global.main.end_session.visible = true
++                Global.main.session_timer = 0
+                 var send_data = false
+ 
+                 var need_to_update = SteamHandler.set_achievement(SteamHandler.ACHIVEMENTS.DESTROY_ALL_OBJECTS, false)

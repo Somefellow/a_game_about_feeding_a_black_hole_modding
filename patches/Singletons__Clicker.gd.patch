@@ -1,0 +1,113 @@
+--- "recovered/Singletons/Clicker.gd"	2026-03-20 14:17:29.612810100 +1100
++++ "recovered/Singletons/Clicker.gd"	2026-03-20 17:47:41.474434300 +1100
+@@ -25,9 +25,83 @@
+ 
+ 
+ var controller_pos = Vector2(0, -200)
++var auto_target: SpaceObject = null
++
++var target_search_cooldown: float = 0.0
++const TARGET_SEARCH_INTERVAL: float = 0.25
++const SWITCH_THRESHOLD: float = 1.2
++
++func _score_object(obj: SpaceObject) -> float:
++    var score = float(obj.base_value)
++
++    # Tier 1: Comets and UFOs — highest priority, time-limited, die on contact
++    if obj is Comet or obj is UFO:
++        score += 2000.0
++        score -= obj.global_position.distance_to(global_position) * 0.05
++        return score
++
++    # Tier 2: Modified objects — always beat unmodified ones
++    # special_type is null for unmodified objects; any non-null value = modified
++    if obj.special_type != null:
++        score += 1000.0
++
++    # Tier 3: Secondary scoring (applies within each tier)
++    # Prefer nearly-dead objects — faster kill, faster reward
++    if obj.health_component and obj.health_component.max_health > 0:
++        var health_pct = float(obj.health_component.current_health) / float(obj.health_component.max_health)
++        score += (1.0 - health_pct) * 50.0
++
++    # Proximity bias: break ties in favour of nearby objects
++    score -= obj.global_position.distance_to(global_position) * 0.05
++
++    return score
++
++func _find_best_target() -> SpaceObject:
++    if not Global.main or not Global.main.object_manager:
++        return null
++
++    # Use spatial grid for local scan; fall back to full scan if nothing nearby
++    var search_radius = 600.0 * Util.get_zoom_factor()
++    var objects = Global.main.object_manager.get_objects_near(global_position, search_radius, false, false)
++    if objects.is_empty():
++        objects = Global.main.object_manager.get_all_active_objects(true)
++
++    var best_score = -INF
++    var best_obj: SpaceObject = null
++    for obj in objects:
++        if obj.is_dying:
++            continue
++        # Misc objects (Comet, UFO) are managed outside the pool system and never have
++        # is_active or can_be_damaged set — include them regardless of those flags
++        if not obj.is_misc_type and (not obj.is_active or not obj.can_be_damaged):
++            continue
++        var score = _score_object(obj)
++        if score > best_score:
++            best_score = score
++            best_obj = obj
++
++    return best_obj
+ 
+ func _process(delta: float) -> void :
+-    if follow_mouse:
++    if Global.game_state == Util.GAME_STATES.PLAYING:
++        target_search_cooldown -= delta
++
++        var current_invalid = auto_target == null or auto_target.is_dying or not auto_target.is_active
++        if current_invalid or target_search_cooldown <= 0.0:
++            var candidate = _find_best_target()
++            target_search_cooldown = TARGET_SEARCH_INTERVAL
++
++            if current_invalid:
++                # No valid target — accept whatever we found
++                auto_target = candidate
++            elif candidate != null:
++                # Hysteresis: only switch if the new target scores ≥20% better
++                if _score_object(candidate) >= _score_object(auto_target) * SWITCH_THRESHOLD:
++                    auto_target = candidate
++
++        if auto_target != null:
++            global_position = auto_target.global_position
++    elif follow_mouse:
+         global_position = get_global_mouse_position()
+ 
+     else:
+@@ -164,11 +238,17 @@
+             show()
+         Util.GAME_STATES.PLAYING:
+             setup()
++            # Snap to target before show() to prevent a one-frame flicker to the mouse position
++            auto_target = _find_best_target()
++            if auto_target != null:
++                global_position = auto_target.global_position
++            target_search_cooldown = TARGET_SEARCH_INTERVAL
+             %Timer.start( %Timer.wait_time)
+ 
+             %CanvasLayer.show()
+             show()
+         Util.GAME_STATES.END_OF_TEIR:
++            auto_target = null
+             electric_charges = 0
+ 
+             for moon in %Moons.get_children():
+@@ -180,6 +260,7 @@
+             %CanvasLayer.hide()
+             hide()
+         Util.GAME_STATES.END_OF_SESSION:
++            auto_target = null
+             electric_charges = 0
+ 
+             for moon in %Moons.get_children():
