@@ -1,0 +1,19 @@
+# Tools (downloaded by init.sh)
+tools/*
+!tools/.gitkeep
+
+# Decompiled source (large, copyrighted)
+recovered/*
+!recovered/.gitkeep
+
+# Original game PCK (copyrighted)
+original_pck/*.pck
+
+# Build outputs
+compiled/*
+!compiled/.gitkeep
+modded_*.pck
+
+# Temp decompile working dir
+.tmp_decompile/
+
