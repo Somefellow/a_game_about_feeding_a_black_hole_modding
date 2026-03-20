@@ -26,9 +26,9 @@ PCK="${PCKS[0]}"
 echo "Found PCK: $PCK"
 
 # Warn if recovered/ is non-empty (ignoring .gitkeep)
-EXISTING=$(find "$RECOVERED" -not -name ".gitkeep" -not -path "$RECOVERED" | head -1)
+EXISTING=$(find "$RECOVERED" -not -name ".gitkeep" -not -path "$RECOVERED" -print -quit)
 if [[ -n "$EXISTING" ]]; then
-    read -r -p "Warning: recovered/ is non-empty. Overwrite? [y/N] " answer
+    read -r -p "Warning: recovered/ is non-empty. Overwrite? [y/N] " answer || true
     if [[ ! "$answer" =~ ^[Yy]$ ]]; then
         echo "Aborted."
         exit 0
