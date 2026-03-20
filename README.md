@@ -6,7 +6,7 @@ A reproducible modding workflow for *A Game About Feeding A Black Hole* using [G
 
 ## Prerequisites
 
-- Linux (x86_64)
+- Linux (x86_64) — developed and tested on WSL2 (Windows Subsystem for Linux)
 - `curl`, `unzip`, `diff` (standard on most distros)
 
 ---
