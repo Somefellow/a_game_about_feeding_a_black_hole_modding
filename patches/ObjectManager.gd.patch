@@ -1,11 +1,46 @@
---- "recovered/ObjectManager.gd"	2026-03-20 14:17:20.462460300 +1100
-+++ "recovered/ObjectManager.gd"	2026-03-20 13:43:15.011042300 +1100
-@@ -492,7 +492,7 @@
+--- recovered/ObjectManager.gd
++++ recovered/ObjectManager.gd
+@@ -50,6 +50,8 @@
+ var comet_pitty_chance = 0.0
+ var ufo_pitty_chance = 0.0
+ 
++var _waiting_for_resources: bool = false
++
+ 
+ func _ready() -> void :
+     for type in Util.OBJECT_TYPES.values():
+@@ -110,6 +112,16 @@
+     if is_main_menu:
+         return
+ 
++    if _waiting_for_resources and Global.game_state == Util.GAME_STATES.PLAYING:
++        if Global.main != null:
++            var all_drained = (
++                Global.main.asteroid_resource_pool.particle_count <= 0 and
++                Global.main.planet_resource_pool.particle_count <= 0 and
++                Global.main.star_resource_pool.particle_count <= 0
++            )
++            if all_drained:
++                _waiting_for_resources = false
++                Global.main.end_session.visible = true
+ 
+     if %Asteroids.get_child_count() < asteroids_to_prewarm:
+         _create_asteroid()
+@@ -492,7 +504,7 @@
      if Global.game_state == Util.GAME_STATES.PLAYING:
          if get_all_active_objects(false).size() <= 0:
              if Global.main != null:
 -                Global.main.end_session.visible = true
-+                Global.main.session_timer = 0
++                _waiting_for_resources = true
                  var send_data = false
  
                  var need_to_update = SteamHandler.set_achievement(SteamHandler.ACHIVEMENTS.DESTROY_ALL_OBJECTS, false)
+@@ -533,6 +545,8 @@
+ 
+     accumulated_boid_forces.clear()
+ 
++    _waiting_for_resources = false
++
+ func do_new_session_spawning(duration):
+     var star_list = get_objects_from_pool(max_stars, Util.OBJECT_TYPES.STAR)
+     place_objects_in_donut(star_list, Global.black_hole.gravity_radius, outer_radius, false)

@@ -1,5 +1,5 @@
---- "recovered/End of Run Summary.gd"	2026-03-20 14:17:27.096196600 +1100
-+++ "recovered/End of Run Summary.gd"	2026-03-20 15:14:04.725975600 +1100
+--- recovered/End of Run Summary.gd
++++ recovered/End of Run Summary.gd
 @@ -175,6 +175,11 @@
          %"Moeny UI".animate()
          %"TaDa Audio".play()

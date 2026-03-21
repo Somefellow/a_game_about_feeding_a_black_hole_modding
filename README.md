@@ -67,7 +67,7 @@ This will:
 2. Auto-detect the bytecode revision
 3. Compile only the `.gd` files you changed
 4. Patch the original PCK with your compiled bytecode
-5. Output `modded_<name>.pck` at the project root
+5. Output `modded_pck/<name>.pck`
 
 ### Update patches (after editing files in recovered/)
 
@@ -79,7 +79,7 @@ Regenerates `patches/*.patch` by diffing your current `recovered/` against a fre
 
 ### Deploy
 
-Copy `modded_<name>.pck` into the game directory, replacing the original `.pck`.
+Copy `modded_pck/<name>.pck` into the game directory, replacing the original `.pck`.
 
 ---
 
@@ -96,6 +96,7 @@ Copy `modded_<name>.pck` into the game directory, replacing the original `.pck`.
 ├── patches/               ← versioned mod patches (committed to git)
 ├── original_pck/          ← put your .pck here (gitignored)
 ├── recovered/             ← decompiled source; edit here (gitignored)
+├── modded_pck/            ← output modded PCK (gitignored)
 ├── tools/                 ← GDRETools binary (gitignored, populated by init.sh)
 └── compiled/              ← temp bytecode output (gitignored)
 ```

@@ -17,7 +17,8 @@ for patch_file in "$PATCHES"/*.patch; do
     [[ -e "$patch_file" ]] || continue
     patch_name="$(basename "$patch_file")"
     echo -n "Applying $patch_name ... "
-    if patch -p0 -d "$ROOT" < "$patch_file"; then
+    target_file="$(sed -n 's/^--- //p' "$patch_file" | head -1)"
+    if patch -p0 "$ROOT/$target_file" < "$patch_file"; then
         APPLIED=$((APPLIED + 1))
     else
         echo "FAILED"

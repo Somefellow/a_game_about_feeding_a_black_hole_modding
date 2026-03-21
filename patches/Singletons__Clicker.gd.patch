@@ -1,5 +1,5 @@
---- "recovered/Singletons/Clicker.gd"	2026-03-20 14:17:29.612810100 +1100
-+++ "recovered/Singletons/Clicker.gd"	2026-03-20 17:47:41.474434300 +1100
+--- recovered/Singletons/Clicker.gd
++++ recovered/Singletons/Clicker.gd
 @@ -25,9 +25,83 @@
  
  

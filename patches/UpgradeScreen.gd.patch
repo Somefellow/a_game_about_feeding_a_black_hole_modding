@@ -1,5 +1,5 @@
---- "recovered/UpgradeScreen.gd"	2026-03-20 14:17:25.962319600 +1100
-+++ "recovered/UpgradeScreen.gd"	2026-03-20 17:24:28.532950800 +1100
+--- recovered/UpgradeScreen.gd
++++ recovered/UpgradeScreen.gd
 @@ -196,6 +196,7 @@
      set_process_input(true)
      set_process(true)

@@ -12,7 +12,8 @@ original_pck/*.pck
 # Build outputs
 compiled/*
 !compiled/.gitkeep
-modded_*.pck
+modded_pck/*
+!modded_pck/.gitkeep
 
 # Temp decompile working dir
 .tmp_decompile/

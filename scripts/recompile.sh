@@ -95,7 +95,8 @@ fi
 
 echo "$CHANGED_COUNT file(s) changed. Running pck-patch..."
 
-OUTPUT_PCK="$ROOT/modded_${PCK_BASENAME}.pck"
+mkdir -p "$ROOT/modded_pck"
+OUTPUT_PCK="$ROOT/modded_pck/${PCK_BASENAME}.pck"
 "$BINARY" --headless \
     --pck-patch="$PCK" \
     "${PATCH_ARGS[@]}" \
