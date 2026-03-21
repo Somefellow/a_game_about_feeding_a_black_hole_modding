@@ -1,0 +1,10 @@
+--- recovered/Minions/Breaker Minion.gd
++++ recovered/Minions/Breaker Minion.gd
+@@ -80,6 +80,7 @@
+ 
+     if dist_squared_from_target < 256 and gun_loaded == true and target_object != null:
+         target_object.take_damage(damage)
++        Global.session_stats.manual_clicks += 1
+         gun_loaded = false
+         %Timer.start()
+ 

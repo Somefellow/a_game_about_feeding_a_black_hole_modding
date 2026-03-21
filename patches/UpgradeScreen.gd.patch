@@ -8,7 +8,7 @@
  
  
  func check_upgrade_tree_achivements():
-@@ -240,6 +241,62 @@
+@@ -240,6 +241,68 @@
      hide_screen()
  
  
@@ -28,8 +28,14 @@
 +
 +        affordable.sort_custom(func(a, b): return a.cost < b.cost)
 +        var target = affordable[0]
-+        target.is_highlighted = true
++        # Pan the tech tree to centre this node (tween takes 0.5 s)
++        tech_tree.tween_to_pos(-target.position)
 +        await get_tree().create_timer(0.5).timeout
++        if Global.game_state != Util.GAME_STATES.UPGRADES:
++            return
++        # Show tooltip for 1.5 s
++        target.is_highlighted = true
++        await get_tree().create_timer(1.5).timeout
 +        if Global.game_state != Util.GAME_STATES.UPGRADES:
 +            target.is_highlighted = false
 +            return
@@ -58,7 +64,7 @@
 +            for choice in choices:
 +                if choice.state == TechTreeNode.STATES.AVAILABLE and choice.can_pay_cost:
 +                    choice.is_highlighted = true
-+                    await get_tree().create_timer(0.5).timeout
++                    await get_tree().create_timer(1.5).timeout
 +                    if Global.game_state != Util.GAME_STATES.UPGRADES:
 +                        choice.is_highlighted = false
 +                        return false

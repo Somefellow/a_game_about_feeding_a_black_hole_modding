@@ -1,6 +1,6 @@
 --- recovered/Singletons/Clicker.gd
 +++ recovered/Singletons/Clicker.gd
-@@ -25,9 +25,83 @@
+@@ -25,9 +25,100 @@
  
  
  var controller_pos = Vector2(0, -200)
@@ -19,12 +19,7 @@
 +        score -= obj.global_position.distance_to(global_position) * 0.05
 +        return score
 +
-+    # Tier 2: Modified objects — always beat unmodified ones
-+    # special_type is null for unmodified objects; any non-null value = modified
-+    if obj.special_type != null:
-+        score += 1000.0
-+
-+    # Tier 3: Secondary scoring (applies within each tier)
++    # Tier 2/3: Secondary scoring (applies within each pool)
 +    # Prefer nearly-dead objects — faster kill, faster reward
 +    if obj.health_component and obj.health_component.max_health > 0:
 +        var health_pct = float(obj.health_component.current_health) / float(obj.health_component.max_health)
@@ -45,20 +40,36 @@
 +    if objects.is_empty():
 +        objects = Global.main.object_manager.get_all_active_objects(true)
 +
++    var best_lifetime_score = -INF
++    var best_lifetime_obj: SpaceObject = null
++    var best_modified_score = -INF
++    var best_modified_obj: SpaceObject = null
 +    var best_score = -INF
 +    var best_obj: SpaceObject = null
++
 +    for obj in objects:
 +        if obj.is_dying:
 +            continue
-+        # Misc objects (Comet, UFO) are managed outside the pool system and never have
-+        # is_active or can_be_damaged set — include them regardless of those flags
 +        if not obj.is_misc_type and (not obj.is_active or not obj.can_be_damaged):
 +            continue
 +        var score = _score_object(obj)
-+        if score > best_score:
-+            best_score = score
-+            best_obj = obj
++        if obj is Comet or obj is UFO:
++            if score > best_lifetime_score:
++                best_lifetime_score = score
++                best_lifetime_obj = obj
++        elif obj.special_type != null:
++            if score > best_modified_score:
++                best_modified_score = score
++                best_modified_obj = obj
++        else:
++            if score > best_score:
++                best_score = score
++                best_obj = obj
 +
++    if best_lifetime_obj != null:
++        return best_lifetime_obj
++    if best_modified_obj != null:
++        return best_modified_obj
 +    return best_obj
  
  func _process(delta: float) -> void :
@@ -66,7 +77,7 @@
 +    if Global.game_state == Util.GAME_STATES.PLAYING:
 +        target_search_cooldown -= delta
 +
-+        var current_invalid = auto_target == null or auto_target.is_dying or not auto_target.is_active
++        var current_invalid = auto_target == null or auto_target.is_dying or (not auto_target.is_misc_type and not auto_target.is_active)
 +        if current_invalid or target_search_cooldown <= 0.0:
 +            var candidate = _find_best_target()
 +            target_search_cooldown = TARGET_SEARCH_INTERVAL
@@ -75,8 +86,14 @@
 +                # No valid target — accept whatever we found
 +                auto_target = candidate
 +            elif candidate != null:
++                # Always switch immediately to limited-lifetime targets (Comet/UFO)
++                if candidate is Comet or candidate is UFO:
++                    auto_target = candidate
++                # Always switch immediately to a modified target if current is unmodified
++                elif candidate.special_type != null and (auto_target == null or auto_target.special_type == null):
++                    auto_target = candidate
 +                # Hysteresis: only switch if the new target scores ≥20% better
-+                if _score_object(candidate) >= _score_object(auto_target) * SWITCH_THRESHOLD:
++                elif _score_object(candidate) >= _score_object(auto_target) * SWITCH_THRESHOLD:
 +                    auto_target = candidate
 +
 +        if auto_target != null:
@@ -85,7 +102,7 @@
          global_position = get_global_mouse_position()
  
      else:
-@@ -164,11 +238,17 @@
+@@ -164,11 +255,17 @@
              show()
          Util.GAME_STATES.PLAYING:
              setup()
@@ -103,7 +120,7 @@
              electric_charges = 0
  
              for moon in %Moons.get_children():
-@@ -180,6 +260,7 @@
+@@ -180,6 +277,7 @@
              %CanvasLayer.hide()
              hide()
          Util.GAME_STATES.END_OF_SESSION:
