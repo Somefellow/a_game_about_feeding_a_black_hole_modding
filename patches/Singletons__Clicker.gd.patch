@@ -1,6 +1,6 @@
 --- recovered/Singletons/Clicker.gd
 +++ recovered/Singletons/Clicker.gd
-@@ -25,9 +25,100 @@
+@@ -25,9 +25,108 @@
  
  
  var controller_pos = Vector2(0, -200)
@@ -34,12 +34,7 @@
 +    if not Global.main or not Global.main.object_manager:
 +        return null
 +
-+    # Use spatial grid for local scan; fall back to full scan if nothing nearby
-+    var search_radius = 600.0 * Util.get_zoom_factor()
-+    var objects = Global.main.object_manager.get_objects_near(global_position, search_radius, false, false)
-+    if objects.is_empty():
-+        objects = Global.main.object_manager.get_all_active_objects(true)
-+
++    var om = Global.main.object_manager
 +    var best_lifetime_score = -INF
 +    var best_lifetime_obj: SpaceObject = null
 +    var best_modified_score = -INF
@@ -47,7 +42,11 @@
 +    var best_score = -INF
 +    var best_obj: SpaceObject = null
 +
-+    for obj in objects:
++    # Lifetime and modified objects are always scanned globally:
++    # - Comets/UFOs are not registered in the spatial grid so get_objects_near
++    #   will never return them, even with filter_misc_object = false.
++    # - Modified objects may spawn anywhere on the map outside the local radius.
++    for obj in om.get_all_active_objects(true):
 +        if obj.is_dying:
 +            continue
 +        if not obj.is_misc_type and (not obj.is_active or not obj.can_be_damaged):
@@ -61,10 +60,19 @@
 +            if score > best_modified_score:
 +                best_modified_score = score
 +                best_modified_obj = obj
-+        else:
-+            if score > best_score:
-+                best_score = score
-+                best_obj = obj
++
++    # Unmodified objects use the local spatial scan so proximity bias applies.
++    var search_radius = 600.0 * Util.get_zoom_factor()
++    var local_objects = om.get_objects_near(global_position, search_radius, true, true)
++    if local_objects.is_empty():
++        local_objects = om.get_all_active_objects(false)
++    for obj in local_objects:
++        if obj.is_dying or not obj.is_active or not obj.can_be_damaged:
++            continue
++        var score = _score_object(obj)
++        if score > best_score:
++            best_score = score
++            best_obj = obj
 +
 +    if best_lifetime_obj != null:
 +        return best_lifetime_obj
@@ -102,7 +110,7 @@
          global_position = get_global_mouse_position()
  
      else:
-@@ -164,11 +255,17 @@
+@@ -164,11 +263,17 @@
              show()
          Util.GAME_STATES.PLAYING:
              setup()
@@ -120,7 +128,7 @@
              electric_charges = 0
  
              for moon in %Moons.get_children():
-@@ -180,6 +277,7 @@
+@@ -180,6 +285,7 @@
              %CanvasLayer.hide()
              hide()
          Util.GAME_STATES.END_OF_SESSION:
