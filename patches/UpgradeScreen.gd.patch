@@ -1,15 +1,15 @@
---- recovered/UpgradeScreen.gd
-+++ recovered/UpgradeScreen.gd
-@@ -196,6 +196,7 @@
-     set_process_input(true)
-     set_process(true)
+--- recovered/UpgradeScreen.gd	2026-05-09 11:03:48.329854360 +1000
++++ recovered/UpgradeScreen.gd	2026-05-09 11:05:00.589854595 +1000
+@@ -217,6 +217,8 @@
+     do_on_show_animation()
+ 
      show()
 +    if Global.AUTO_BUY_UPGRADES:
 +        _auto_buy_all_upgrades()
  
  
- func check_upgrade_tree_achivements():
-@@ -240,6 +241,74 @@
+ func do_on_show_animation():
+@@ -289,6 +291,73 @@
      hide_screen()
  
  
@@ -38,7 +38,6 @@
 +        await get_tree().create_timer(Global.DELAY_SPEED).timeout
 +        if Global.game_state != Util.GAME_STATES.UPGRADES:
 +            return
-+        # Show tooltip for 1.5 s
 +        target.is_highlighted = true
 +        await get_tree().create_timer(Global.DELAY_SPEED).timeout
 +        if Global.game_state != Util.GAME_STATES.UPGRADES:

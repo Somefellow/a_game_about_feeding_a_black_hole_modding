@@ -1,9 +1,9 @@
---- recovered/Global.gd
-+++ recovered/Global.gd
-@@ -16,6 +16,11 @@
-
+--- recovered/Global.gd	2026-05-09 11:03:48.329854360 +1000
++++ recovered/Global.gd	2026-05-09 11:03:59.189854879 +1000
+@@ -16,6 +16,12 @@
+ 
  const G = 100000.0
-
+ 
 +## Mod settings
 +const DELAY_SPEED: float = 0.25        ## seconds between auto-play actions; 0.0 = instant
 +const AUTO_BUY_UPGRADES: bool = false  ## automatically purchase upgrades on the upgrade screen
@@ -11,5 +11,5 @@
 +const AUTO_ADVANCE_END: bool = false   ## automatically advance after the end-of-run summary
 +
  var load_saved_run = true
-
-
+ 
+ 

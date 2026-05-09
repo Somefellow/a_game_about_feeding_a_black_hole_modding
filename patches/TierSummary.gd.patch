@@ -1,6 +1,6 @@
---- recovered/TierSummary.gd
-+++ recovered/TierSummary.gd
-@@ -87,6 +87,10 @@
+--- recovered/TierSummary.gd	2026-05-09 11:03:48.329854360 +1000
++++ recovered/TierSummary.gd	2026-05-09 11:04:11.099855262 +1000
+@@ -87,6 +87,11 @@
      %"Moeny UI".modulate.a = 1.0
      %"Moeny UI".animate()
      %"TaDa Audio".play()
