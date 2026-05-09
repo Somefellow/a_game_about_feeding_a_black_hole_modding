@@ -1,0 +1,34 @@
+--- recovered/Singletons/Main.gd
++++ recovered/Singletons/Main.gd
+@@ -17,6 +17,8 @@
+ 
+ var epilogue = false
+ 
++var _speed_label: Label
++
+ @export var is_dev_mod = false
+ @export var is_demo = false
+ 
+@@ -109,11 +111,22 @@
+         if time_gain_cooldown <= 0:
+             gain_decay_factor = lerp(gain_decay_factor, 1.0, delta * 2)
+ 
++        if Global.GAME_SPEED_CONTROL and _speed_label != null:
++            _speed_label.text = str(int(Engine.time_scale)) + "x"
++
+ 
+ 
+ func _ready():
+     Global.main = self
+ 
++    if Global.GAME_SPEED_CONTROL:
++        _speed_label = Label.new()
++        _speed_label.theme = load("res://Theme/Theme_Medium_Font.tres")
++        _speed_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
++        _speed_label.add_theme_color_override("font_color", Color(0.3234, 0.3234, 0.33, 1))
++        _speed_label.text = "1x"
++        %"Timer MarginContainer3".get_child(0).add_child(_speed_label)
++
+     %"Game Over Screen".hide()
+ 
+     AudioManager.on_new_game()

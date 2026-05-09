@@ -9,7 +9,7 @@
 +const AUTO_BUY_UPGRADES: bool = false  ## automatically purchase upgrades on the upgrade screen
 +const AUTO_ADVANCE_TIER: bool = false  ## automatically advance after the between-tier summary
 +const AUTO_ADVANCE_END: bool = false   ## automatically advance after the end-of-run summary
-+const GAME_SPEED_CONTROL: bool = false ## Q/R keys scale game speed 1x-10x during the playing phase
++const GAME_SPEED_CONTROL: bool = true  ## Q/R keys scale game speed 1x-10x during the playing phase
 +
  var load_saved_run = true
  
