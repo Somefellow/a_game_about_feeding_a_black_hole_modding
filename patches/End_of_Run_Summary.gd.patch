@@ -4,7 +4,7 @@
          %"Moeny UI".animate()
          %"TaDa Audio".play()
      )
-+    anim_tween.tween_interval(1.5)
++    anim_tween.tween_interval(Global.DELAY_SPEED)
 +    anim_tween.tween_callback(func():
 +        if is_shown and Global.game_state == Util.GAME_STATES.END_OF_SESSION:
 +            _on_upgrades_pressed()

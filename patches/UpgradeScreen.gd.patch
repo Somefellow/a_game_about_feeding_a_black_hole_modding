@@ -8,7 +8,7 @@
  
  
  func check_upgrade_tree_achivements():
-@@ -240,6 +241,68 @@
+@@ -240,6 +241,74 @@
      hide_screen()
  
  
@@ -16,10 +16,14 @@
 +    if Global.game_state != Util.GAME_STATES.UPGRADES:
 +        return
 +
++    await get_tree().process_frame
++
 +    while Global.game_state == Util.GAME_STATES.UPGRADES:
 +        if state == STATES.ROGULIKE:
-+            if not await _auto_pick_roguelike_choice():
-+                break
++            while not await _auto_pick_roguelike_choice():
++                if Global.game_state != Util.GAME_STATES.UPGRADES:
++                    return
++                await get_tree().process_frame
 +            continue
 +
 +        var affordable = _get_affordable_available_nodes()
@@ -30,20 +34,21 @@
 +        var target = affordable[0]
 +        # Pan the tech tree to centre this node (tween takes 0.5 s)
 +        tech_tree.tween_to_pos(-target.position)
-+        await get_tree().create_timer(0.5).timeout
++        await get_tree().create_timer(Global.DELAY_SPEED).timeout
 +        if Global.game_state != Util.GAME_STATES.UPGRADES:
 +            return
 +        # Show tooltip for 1.5 s
 +        target.is_highlighted = true
-+        await get_tree().create_timer(1.5).timeout
++        await get_tree().create_timer(Global.DELAY_SPEED).timeout
 +        if Global.game_state != Util.GAME_STATES.UPGRADES:
 +            target.is_highlighted = false
 +            return
 +        target.is_highlighted = false
 +        target._on_click_mask_pressed()
++        await get_tree().process_frame
 +
 +    if Global.game_state == Util.GAME_STATES.UPGRADES:
-+        await get_tree().create_timer(1.5).timeout
++        await get_tree().create_timer(Global.DELAY_SPEED).timeout
 +        if Global.game_state == Util.GAME_STATES.UPGRADES:
 +            hide_screen()
 +
@@ -64,12 +69,13 @@
 +            for choice in choices:
 +                if choice.state == TechTreeNode.STATES.AVAILABLE and choice.can_pay_cost:
 +                    choice.is_highlighted = true
-+                    await get_tree().create_timer(1.5).timeout
++                    await get_tree().create_timer(Global.DELAY_SPEED).timeout
 +                    if Global.game_state != Util.GAME_STATES.UPGRADES:
 +                        choice.is_highlighted = false
 +                        return false
 +                    choice.is_highlighted = false
 +                    choice._on_click_mask_pressed()
++                    await get_tree().process_frame
 +                    return true
 +    return false
 +

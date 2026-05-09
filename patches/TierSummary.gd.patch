@@ -4,7 +4,7 @@
      %"Moeny UI".modulate.a = 1.0
      %"Moeny UI".animate()
      %"TaDa Audio".play()
-+    get_tree().create_timer(1.5).timeout.connect(func():
++    get_tree().create_timer(Global.DELAY_SPEED).timeout.connect(func():
 +        if is_shown and Global.game_state == Util.GAME_STATES.END_OF_TEIR:
 +            _on_upgrades_pressed()
 +    )
