@@ -9,7 +9,7 @@
  @export var is_dev_mod = false
  @export var is_demo = false
  
-@@ -109,11 +111,22 @@
+@@ -109,11 +111,23 @@
          if time_gain_cooldown <= 0:
              gain_decay_factor = lerp(gain_decay_factor, 1.0, delta * 2)
  
@@ -27,8 +27,24 @@
 +        _speed_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 +        _speed_label.add_theme_color_override("font_color", Color(0.3234, 0.3234, 0.33, 1))
 +        _speed_label.text = "1x"
++        _speed_label.custom_minimum_size = Vector2(0, 24)
 +        %"Timer MarginContainer3".get_child(0).add_child(_speed_label)
 +
      %"Game Over Screen".hide()
  
      AudioManager.on_new_game()
+@@ -434,6 +448,14 @@
+ func _input(event: InputEvent) -> void :
+     if end_session.visible == true and event.is_action_pressed("upgrades"):
+         _on_end_session_button_pressed()
++    if Global.GAME_SPEED_CONTROL and Global.game_state == Util.GAME_STATES.PLAYING:
++        if event is InputEventKey and event.pressed and not event.echo:
++            if event.keycode == KEY_R:
++                Engine.time_scale = minf(Engine.time_scale + 1.0, 10.0)
++                get_viewport().set_input_as_handled()
++            elif event.keycode == KEY_Q:
++                Engine.time_scale = maxf(Engine.time_scale - 1.0, 1.0)
++                get_viewport().set_input_as_handled()
+ 
+ 
+ 

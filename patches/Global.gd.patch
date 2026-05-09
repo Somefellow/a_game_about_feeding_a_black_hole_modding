@@ -23,22 +23,3 @@
          SignalBus.game_state_changed.emit()
  
          update_mouse()
-@@ -50,6 +59,18 @@
-     update_input_stuff(input_type)
- 
- 
-+func _unhandled_input(event: InputEvent) -> void:
-+    if not GAME_SPEED_CONTROL:
-+        return
-+    if game_state != Util.GAME_STATES.PLAYING:
-+        return
-+    if event is InputEventKey and event.pressed and not event.echo:
-+        if event.keycode == KEY_R:
-+            Engine.time_scale = minf(Engine.time_scale + 1.0, 10.0)
-+        elif event.keycode == KEY_Q:
-+            Engine.time_scale = maxf(Engine.time_scale - 1.0, 1.0)
-+
-+
- func new_game():
-     rng = RandomNumberGenerator.new()
-     rng.randomize()
