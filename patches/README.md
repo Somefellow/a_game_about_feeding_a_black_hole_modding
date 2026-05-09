@@ -4,17 +4,24 @@ Each patch is a change applied on top of the original game. This file describes 
 
 ---
 
-## Configurable auto-play delay
+## Mod feature flags
 
 **File:** `Global.gd.patch`
 
-`const DELAY_SPEED: float` at the top of `Global.gd` controls how long the auto-play logic pauses between actions — upgrade purchases, tier screen advances, end-of-run advances, and so on. Set it to `0.0` for instant transitions.
+All automation features are controlled by constants at the top of `Global.gd`. Set any flag to `true` to enable it, `false` to disable it:
+
+| Constant | Default | Effect |
+|---|---|---|
+| `DELAY_SPEED` | `0.25` | Seconds between auto-play actions; `0.0` = instant |
+| `AUTO_BUY_UPGRADES` | `false` | Auto-purchase upgrades on the upgrade screen |
+| `AUTO_ADVANCE_TIER` | `false` | Auto-advance after the between-tier summary |
+| `AUTO_ADVANCE_END` | `false` | Auto-advance after the end-of-run summary |
 
 ---
 
 ## Auto-buy upgrades on the upgrade screen
 
-**File:** `UpgradeScreen.gd.patch`
+**File:** `UpgradeScreen.gd.patch` — requires `AUTO_BUY_UPGRADES = true`
 
 When the upgrade screen opens, all affordable upgrades are automatically purchased one by one. Roguelike choice cards are also handled — the cheapest available option is picked. Each purchase pauses for `DELAY_SPEED` seconds so you can see what was bought. Once all affordable upgrades are spent, the screen closes after the same delay.
 
@@ -22,7 +29,7 @@ When the upgrade screen opens, all affordable upgrades are automatically purchas
 
 ## Auto-advance tier and end-of-run summary screens
 
-**Files:** `TierSummary.gd.patch`, `End_of_Run_Summary.gd.patch`
+**Files:** `TierSummary.gd.patch`, `End_of_Run_Summary.gd.patch` — require `AUTO_ADVANCE_TIER` / `AUTO_ADVANCE_END = true`
 
 After the score animation finishes on the between-tier summary and the end-of-run summary, the screen automatically advances to the next stage (upgrades or the main menu) after `DELAY_SPEED` seconds — no click required.
 

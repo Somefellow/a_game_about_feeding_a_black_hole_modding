@@ -4,7 +4,8 @@
      set_process_input(true)
      set_process(true)
      show()
-+    _auto_buy_all_upgrades()
++    if Global.AUTO_BUY_UPGRADES:
++        _auto_buy_all_upgrades()
  
  
  func check_upgrade_tree_achivements():
