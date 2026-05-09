@@ -1,5 +1,5 @@
---- recovered/UpgradeScreen.gd	2026-05-09 11:03:48.329854360 +1000
-+++ recovered/UpgradeScreen.gd	2026-05-09 11:05:00.589854595 +1000
+--- recovered/UpgradeScreen.gd
++++ recovered/UpgradeScreen.gd
 @@ -217,6 +217,8 @@
      do_on_show_animation()
  

@@ -26,7 +26,7 @@
  
      if %Asteroids.get_child_count() < asteroids_to_prewarm:
          _create_asteroid()
-@@ -492,7 +504,7 @@
+@@ -498,7 +510,7 @@
      if Global.game_state == Util.GAME_STATES.PLAYING:
          if get_all_active_objects(false).size() <= 0:
              if Global.main != null:
@@ -35,7 +35,7 @@
                  var send_data = false
  
                  var need_to_update = SteamHandler.set_achievement(SteamHandler.ACHIVEMENTS.DESTROY_ALL_OBJECTS, false)
-@@ -533,6 +545,8 @@
+@@ -539,6 +551,8 @@
  
      accumulated_boid_forces.clear()
  
