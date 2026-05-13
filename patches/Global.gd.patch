@@ -14,12 +14,3 @@
  var load_saved_run = true
  
  
-@@ -26,6 +33,8 @@
- var game_state: Util.GAME_STATES:
-     set(new_value):
-         game_state = new_value
-+        if GAME_SPEED_CONTROL and game_state != Util.GAME_STATES.PLAYING:
-+            Engine.time_scale = 1.0
-         SignalBus.game_state_changed.emit()
- 
-         update_mouse()

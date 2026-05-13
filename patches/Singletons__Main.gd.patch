@@ -39,7 +39,7 @@
          _on_end_session_button_pressed()
 +    if Global.GAME_SPEED_CONTROL and Global.game_state == Util.GAME_STATES.PLAYING:
 +        if event is InputEventKey and event.pressed and not event.echo:
-+            if event.keycode == KEY_R:
++            if event.keycode == KEY_E:
 +                Engine.time_scale = minf(Engine.time_scale + 1.0, 10.0)
 +                get_viewport().set_input_as_handled()
 +            elif event.keycode == KEY_Q:
